@@ -15,7 +15,7 @@ export default function AppointmentStatus() {
   
   const [error, setError] = useState('');
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!patientId.trim()) return;
     
@@ -23,25 +23,29 @@ export default function AppointmentStatus() {
     setError('');
     setStatusResult(null);
 
-    // Mock search API
-    setTimeout(() => {
-      setIsSearching(false);
-      
-      if (patientId.length < 5) {
-        setError('Invalid Patient ID. Please check and try again.');
+    try {
+      const res = await fetch(`/api/status/${patientId.trim()}`);
+      if (!res.ok) {
+        if (res.status === 404) {
+          setError('No appointments found for this Patient ID. Please check and try again.');
+        } else {
+          setError('Failed to fetch status. Please try again.');
+        }
         return;
       }
-      
-      // Return a random mock status
-      const statuses: ('PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED')[] = ['PENDING', 'ACCEPTED', 'COMPLETED'];
-      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)];
+
+      const data = await res.json();
       
       setStatusResult({
-        status: randomStatus,
-        date: randomStatus !== 'PENDING' ? 'Oct 24, 2024 at 10:30 AM' : undefined,
-        doctor: 'Dr. Sarah Jenkins',
+        status: data.status,
+        date: data.date ? `${new Date(data.date).toLocaleDateString()} ${data.time ? 'at ' + data.time : ''}` : undefined,
+        doctor: data.doctorName || 'Unassigned',
       });
-    }, 1000);
+    } catch (err) {
+      setError('Network error. Please try again.');
+    } finally {
+      setIsSearching(false);
+    }
   };
 
   return (
@@ -102,7 +106,7 @@ export default function AppointmentStatus() {
                   {statusResult.status === 'ACCEPTED' && <CheckCircle2 className="w-4 h-4" />}
                   {statusResult.status === 'COMPLETED' && <CheckCircle2 className="w-4 h-4" />}
                   {statusResult.status === 'REJECTED' && <XCircle className="w-4 h-4" />}
-                  {statusResult.status}
+                  {statusResult.status === 'ACCEPTED' ? 'APPROVED' : statusResult.status}
                 </div>
               </div>
             </div>
