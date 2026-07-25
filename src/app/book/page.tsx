@@ -12,18 +12,32 @@ export default function BookAppointment() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
       const formData = new FormData(e.currentTarget);
-      const name = formData.get('name') as string;
-      const phone = formData.get('phone') as string;
-      
-      // Generate ID like requirement: Name + Phone Number (simplified)
-      const generatedId = `${name.replace(/\s+/g, '').toUpperCase().substring(0, 4)}-${phone.slice(-4)}`;
-      
-      setSuccessData({ id: generatedId });
+      const data = {
+        name: formData.get('name'),
+        phone: formData.get('phone'),
+        age: formData.get('age'),
+        gender: formData.get('gender'),
+        cause: formData.get('cause')
+      };
+
+      const res = await fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (!res.ok) throw new Error('Failed to create appointment');
+
+      const result = await res.json();
+      setSuccessData({ id: result.id });
+    } catch (error) {
+      console.error(error);
+      alert('There was an error booking your appointment. Please try again.');
+    } finally {
       setIsSubmitting(false);
-    }, 1500);
+    }
   };
 
   if (successData) {
