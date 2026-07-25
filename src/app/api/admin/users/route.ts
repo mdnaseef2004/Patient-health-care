@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import * as jose from 'jose';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 async function checkSuperAdmin(req: NextRequest) {
   const token = req.cookies.get('auth_token')?.value;
