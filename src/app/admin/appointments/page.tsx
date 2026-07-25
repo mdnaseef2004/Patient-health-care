@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import prisma from '@/lib/prisma';
 import { Search, Filter, Calendar } from 'lucide-react';
 

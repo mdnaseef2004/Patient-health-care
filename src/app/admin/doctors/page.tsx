@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic';
+
 import prisma from '@/lib/prisma';
 import { Search, Plus, UserPlus } from 'lucide-react';
 
