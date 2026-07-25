@@ -13,10 +13,10 @@ export async function POST(req: NextRequest) {
 
     // Create or update patient
     const patient = await prisma.patient.upsert({
-      where: { id: generatedId },
+      where: { patientId: generatedId },
       update: { name, phone, age: parseInt(age), gender },
       create: {
-        id: generatedId,
+        patientId: generatedId,
         name,
         phone,
         age: parseInt(age),
