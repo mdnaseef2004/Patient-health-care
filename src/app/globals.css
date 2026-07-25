@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-primary: #007aff;
   --color-primary-foreground: #ffffff;
@@ -32,12 +34,7 @@
   --foreground: #1c1c1e;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #000000;
-    --foreground: #f2f2f7;
-  }
-}
+
 
 body {
   background-color: var(--background);
